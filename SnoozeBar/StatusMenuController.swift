@@ -19,26 +19,23 @@ class StatusMenuController: NSObject {
     let dnd = DND()
     
     @IBAction func snooze10Minutes(_ sender: NSMenuItem) {
-        dnd.enableDND(minutesFromNow: 1)
-        setStatus(minutesFromNow: 1)
+        dnd.enableDND(minutesFromNow: 10)
+        setStatus(minutesFromNow: 10)
     }
 
     @IBAction func snooze30Minutes(_ sender: NSMenuItem) {
         dnd.enableDND(minutesFromNow: 30)
         setStatus(minutesFromNow: 30)
-
     }
 
     @IBAction func snooze1HourNew(_ sender: NSMenuItem) {
         dnd.enableDND(minutesFromNow: 60)
         setStatus(minutesFromNow: 60)
-
     }
 
     @IBAction func snooze4Hour(_ sender: NSMenuItem) {
         dnd.enableDND(minutesFromNow: 60 * 4)
         setStatus(minutesFromNow: 60*4)
-
     }
 
     func setStatus(minutesFromNow: Int) {
@@ -61,7 +58,6 @@ class StatusMenuController: NSObject {
         }
         
         timer = Timer.scheduledTimer(timeInterval: Double(minutesFromNow * 60), target: self, selector: #selector(hideStatus), userInfo: nil, repeats: false)
-
     }
     
     @objc func hideStatus(){
