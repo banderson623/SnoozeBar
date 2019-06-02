@@ -10,6 +10,8 @@
 		316E1C5B22A2F42400084D2B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E1C5A22A2F42400084D2B /* AppDelegate.swift */; };
 		316E1C5D22A2F42500084D2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 316E1C5C22A2F42500084D2B /* Assets.xcassets */; };
 		316E1C6022A2F42500084D2B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 316E1C5E22A2F42500084D2B /* MainMenu.xib */; };
+		316E1C6922A370E700084D2B /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E1C6822A370E700084D2B /* StatusMenuController.swift */; };
+		316E1C6B22A3734E00084D2B /* DND.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E1C6A22A3734E00084D2B /* DND.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		316E1C5F22A2F42500084D2B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		316E1C6122A2F42500084D2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		316E1C6222A2F42500084D2B /* SnoozeBar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnoozeBar.entitlements; sourceTree = "<group>"; };
+		316E1C6822A370E700084D2B /* StatusMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
+		316E1C6A22A3734E00084D2B /* DND.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DND.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,8 +56,10 @@
 			isa = PBXGroup;
 			children = (
 				316E1C5A22A2F42400084D2B /* AppDelegate.swift */,
+				316E1C6822A370E700084D2B /* StatusMenuController.swift */,
 				316E1C5C22A2F42500084D2B /* Assets.xcassets */,
 				316E1C5E22A2F42500084D2B /* MainMenu.xib */,
+				316E1C6A22A3734E00084D2B /* DND.swift */,
 				316E1C6122A2F42500084D2B /* Info.plist */,
 				316E1C6222A2F42500084D2B /* SnoozeBar.entitlements */,
 			);
@@ -92,6 +98,11 @@
 				TargetAttributes = {
 					316E1C5622A2F42400084D2B = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -130,6 +141,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				316E1C6B22A3734E00084D2B /* DND.swift in Sources */,
+				316E1C6922A370E700084D2B /* StatusMenuController.swift in Sources */,
 				316E1C5B22A2F42400084D2B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,7 +280,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SnoozeBar/SnoozeBar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = SnoozeBar/Info.plist;
@@ -285,7 +297,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SnoozeBar/SnoozeBar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = SnoozeBar/Info.plist;
