@@ -15,6 +15,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="bnS-Du-7fj" customClass="StatusMenuController" customModule="SnoozeBar" customModuleProvider="target">
             <connections>
+                <outlet property="resumeMenuItem" destination="hBC-Fj-rfD" id="FBh-d3-Ofm"/>
                 <outlet property="statusIndicator" destination="Ue6-8M-st7" id="rsp-xQ-eMU"/>
                 <outlet property="statusIndicatorSeparator" destination="voh-P0-aeC" id="aKD-i4-FQd"/>
                 <outlet property="statusMenu" destination="DD8-I5-6pg" id="YEc-Iw-Lj9"/>
@@ -24,6 +25,12 @@
             <items>
                 <menuItem title="Snooze for ..." id="Ue6-8M-st7">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Resume Notifications" id="hBC-Fj-rfD">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="resumeNotifications:" target="bnS-Du-7fj" id="pEZ-OL-XT8"/>
+                    </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="voh-P0-aeC"/>
                 <menuItem title="Snooze for 10 minutes" id="JY1-Lo-hyQ">

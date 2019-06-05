@@ -7,75 +7,107 @@
 //
 
 import Cocoa
-
+import os
 
 class StatusMenuController: NSObject {
-    @IBOutlet weak var statusMenu: NSMenu!
-    @IBOutlet weak var statusIndicator: NSMenuItem!
-    @IBOutlet weak var statusIndicatorSeparator: NSMenuItem!
-    var timer: Timer!
-    
-    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    let dnd = DND()
-    
-    @IBAction func snooze10Minutes(_ sender: NSMenuItem) {
-        dnd.enableDND(minutesFromNow: 10)
-        setStatus(minutesFromNow: 10)
-    }
+  @IBOutlet weak var resumeMenuItem: NSMenuItem!
+  @IBOutlet weak var statusMenu: NSMenu!
+  @IBOutlet weak var statusIndicator: NSMenuItem!
+  @IBOutlet weak var statusIndicatorSeparator: NSMenuItem!
 
-    @IBAction func snooze30Minutes(_ sender: NSMenuItem) {
-        dnd.enableDND(minutesFromNow: 30)
-        setStatus(minutesFromNow: 30)
-    }
+  var timer: Timer!
+  let log = OSLog.init(subsystem: "com.bitbyteyum.SnoozeBar", category: "MenuController")
+  let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+  let dnd = DND()
 
-    @IBAction func snooze1HourNew(_ sender: NSMenuItem) {
-        dnd.enableDND(minutesFromNow: 60)
-        setStatus(minutesFromNow: 60)
-    }
+  var dndEndDate = Date.init(timeIntervalSince1970: 0)
+  var lastCheckWasDndEnabled = -1
 
-    @IBAction func snooze4Hour(_ sender: NSMenuItem) {
-        dnd.enableDND(minutesFromNow: 60 * 4)
-        setStatus(minutesFromNow: 60*4)
-    }
+  let readyIcon = NSImage(named: "readyIcon")
+  let snoozingIcon = NSImage(named: "snoozingIcon")
 
-    func setStatus(minutesFromNow: Int) {
+  @IBAction func snooze10Minutes(_ sender: NSMenuItem) {
+    dnd.enableDND(minutesFromNow: 10)
+    dndStateObserver()
+  }
 
-        var dateComponent = DateComponents()
-        dateComponent.minute = minutesFromNow
-        
-        let endTime = Calendar.current.date(byAdding: dateComponent, to: Date())
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "hh:mm"
-        let dateString = formatter.string(from: endTime!)
-        
-        statusIndicator.title = "Snoooz'n until " + dateString
-        statusIndicator.isHidden = false
-        statusIndicatorSeparator.isHidden = false
-        
-        if((timer != nil) && timer.isValid){
-            timer.invalidate();
-        }
-        
-        timer = Timer.scheduledTimer(timeInterval: Double(minutesFromNow * 60), target: self, selector: #selector(hideStatus), userInfo: nil, repeats: false)
+  @IBAction func snooze30Minutes(_ sender: NSMenuItem) {
+    dnd.enableDND(minutesFromNow: 30)
+    dndStateObserver()
+  }
+
+  @IBAction func snooze1HourNew(_ sender: NSMenuItem) {
+    dnd.enableDND(minutesFromNow: 60)
+    dndStateObserver()
+  }
+
+  @IBAction func snooze4Hour(_ sender: NSMenuItem) {
+    dnd.enableDND(minutesFromNow: 60 * 4)
+    dndStateObserver()
+  }
+
+  @IBAction func resumeNotifications(_ sender: NSMenuItem) {
+    dnd.disableDND()
+    dndStateObserver()
+  }
+
+  @IBAction func quitClicked(_ sender: NSMenuItem) {
+    NSApplication.shared.terminate(self)
+  }
+
+  func dndEnabled(){
+
+    if(lastCheckWasDndEnabled != 1) {
+      let endTime = dnd.dndEndTime()
+      let formatter = DateFormatter()
+      formatter.dateFormat = "hh:mm"
+      let until = formatter.string(from: endTime)
+
+      os_log("dnd is transitioning to enabled, until %{public}s", log: log, until)
+
+      statusItem.button?.image = snoozingIcon
+      statusIndicator.title = "Snoooz'n until " + until
+      statusIndicator.isHidden = false
+      statusIndicatorSeparator.isHidden = false
+      resumeMenuItem.isHidden = false
+      lastCheckWasDndEnabled = 1
     }
+  }
     
-    @objc func hideStatus(){
-        print("Timer is over, back to hiding");
-        statusIndicator.isHidden = true
-        statusIndicatorSeparator.isHidden = true
+  func dndIsOver(){
+
+    if(lastCheckWasDndEnabled != 0) {
+      os_log("dnd is transitioning to over", log: log)
+
+      statusItem.button?.image = readyIcon
+      statusIndicator.isHidden = true
+      statusIndicatorSeparator.isHidden = true
+      resumeMenuItem.isHidden = true
+      lastCheckWasDndEnabled = 0
     }
-    
-    override func awakeFromNib() {
-        let icon = NSImage(named: "statusIcon")
-        icon?.isTemplate = true
-        statusItem.button?.image = icon
-        statusItem.menu = statusMenu
-        
-        hideStatus()
+  }
+
+  override func awakeFromNib() {
+    statusItem.menu = statusMenu
+    dndStateObserver()
+    if((timer == nil) || !timer.isValid){
+      timer = Timer.scheduledTimer(timeInterval: 30.0,
+                                   target: self,
+                                   selector: #selector(dndStateObserver),
+                                   userInfo: nil,
+                                   repeats: true)
     }
-    
-    @IBAction func quitClicked(_ sender: NSMenuItem) {
-        NSApplication.shared.terminate(self)
+  }
+
+  @objc func dndStateObserver() {
+//    let endTime = dnd.dndEndTime().description
+//    os_log("checking | dnd %s | end date %s", log: log, dnd.isEnabled() ? "Enabled" : "Disabled", endTime)
+
+    if(!dnd.isEnabled()){
+      dndIsOver()
+    } else {
+      dndEnabled()
     }
+  }
+
 }

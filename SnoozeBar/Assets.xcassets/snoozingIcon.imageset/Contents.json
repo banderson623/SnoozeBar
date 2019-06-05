@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "snooze.16.png",
+      "filename" : "on-16.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "snooze.32.png",
+      "filename" : "on-32.png",
       "scale" : "2x"
     },
     {
