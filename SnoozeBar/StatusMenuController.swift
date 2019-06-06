@@ -56,13 +56,11 @@ class StatusMenuController: NSObject {
   }
 
   func dndEnabled(){
-
     if(lastCheckWasDndEnabled != 1) {
       let endTime = dnd.dndEndTime()
       let formatter = DateFormatter()
       formatter.dateFormat = "hh:mm"
-      let until = formatter.string(from: endTime)
-
+      let until = (endTime > Date()) ? formatter.string(from: endTime) : "midnight"
       os_log("dnd is transitioning to enabled, until %{public}s", log: log, until)
 
       statusItem.button?.image = snoozingIcon
@@ -75,7 +73,6 @@ class StatusMenuController: NSObject {
   }
     
   func dndIsOver(){
-
     if(lastCheckWasDndEnabled != 0) {
       os_log("dnd is transitioning to over", log: log)
 
@@ -100,13 +97,15 @@ class StatusMenuController: NSObject {
   }
 
   @objc func dndStateObserver() {
-//    let endTime = dnd.dndEndTime().description
-//    os_log("checking | dnd %s | end date %s", log: log, dnd.isEnabled() ? "Enabled" : "Disabled", endTime)
+    os_log("dnd EndTime is %{public}s | %{public}s", log: log,
+           dnd.dndEndTime().description(with: NSLocale.autoupdatingCurrent),
+           dnd.isEnabled() ? "Enabled" : "Disabled")
+    let isEnabled = dnd.isEnabled()
 
-    if(!dnd.isEnabled()){
-      dndIsOver()
-    } else {
+    if(isEnabled){
       dndEnabled()
+    } else {
+      dndIsOver()
     }
   }
 

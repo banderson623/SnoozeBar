@@ -34,41 +34,46 @@ class DND {
   }
 
   func isEnabled() -> Bool {
-    return CFPreferencesGetAppBooleanValue("doNotDisturb" as CFString, DND.notificationCenterId, nil)
+    return CFPreferencesGetAppBooleanValue("doNotDisturb" as CFString, DND.notificationCenterId, nil) ||
+           dndEndTime() > Date()
+  }
+
+  func dndEndTimeAsMinutesFromMidnight() -> Int {
+    return CFPreferencesGetAppIntegerValue("dndEnd" as CFString, DND.notificationCenterId, nil)
   }
 
   func dndEndTime() -> Date {
-    let minutesSinceMidnight = CFPreferencesGetAppIntegerValue("dndEnd" as CFString, DND.notificationCenterId, nil)
+    let minutesSinceMidnight = dndEndTimeAsMinutesFromMidnight()
     return dateFromMinutesSinceMidnight(minutesSinceMidnight: minutesSinceMidnight)
   }
 
-    func enableDND(minutesFromNow : Int = 10){
-        let computedEndTime = minutesSinceMidnightAdding(minutesFromNow: minutesFromNow);
-        
-        os_log("Enabling Do Not Disturb for %d minutes, computed to %d minutes since midnight", log: log,
-               minutesFromNow, computedEndTime)
-        
-      CFPreferencesSetValue("dndStart" as CFString, CGFloat(0) as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-      CFPreferencesSetValue("dndEnd" as CFString, CGFloat(computedEndTime) as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-      CFPreferencesSetValue("doNotDisturb" as CFString, true as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-        commitDNDChanges()
-        
-    }
-    
-    func disableDND(){
-      CFPreferencesSetValue("dndStart" as CFString, nil, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-      CFPreferencesSetValue("dndEnd" as CFString, nil, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-      CFPreferencesSetValue("doNotDisturb" as CFString, false as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        commitDNDChanges()
-    }
-    
-    func commitDNDChanges(){
-      CFPreferencesSynchronize(DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        DistributedNotificationCenter.default().postNotificationName(NSNotification.Name(rawValue: "com.apple.notificationcenterui.dndprefs_changed"), object: nil, userInfo: nil, deliverImmediately: true)
-    }
+  func enableDND(minutesFromNow : Int = 10){
+    let computedEndTime = minutesSinceMidnightAdding(minutesFromNow: minutesFromNow);
+
+    os_log("Enabling Do Not Disturb for %d minutes, computed to %d minutes since midnight", log: log,
+           minutesFromNow, computedEndTime)
+
+    CFPreferencesSetValue("dndStart" as CFString, CGFloat(0) as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    CFPreferencesSetValue("dndEnd" as CFString, CGFloat(computedEndTime) as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    CFPreferencesSetValue("doNotDisturb" as CFString, true as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    commitDNDChanges()
+  }
+
+  func disableDND(){
+    CFPreferencesSetValue("dndStart" as CFString, nil, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    CFPreferencesSetValue("dndEnd" as CFString, nil, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    CFPreferencesSetValue("doNotDisturb" as CFString, false as CFPropertyList, DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+
+    commitDNDChanges()
+  }
+
+  func commitDNDChanges(){
+    CFPreferencesSynchronize(DND.notificationCenterId as CFString, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
+      DistributedNotificationCenter.default().postNotificationName(NSNotification.Name(rawValue: "com.apple.notificationcenterui.dndprefs_changed"), object: nil, userInfo: nil, deliverImmediately: true)
+  }
 }
